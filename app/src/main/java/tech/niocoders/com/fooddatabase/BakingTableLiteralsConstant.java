@@ -1,4 +1,4 @@
-package tech.niocoders.com.database;
+package tech.niocoders.com.fooddatabase;
 
 public class BakingTableLiteralsConstant {
     //LETS CREATE THE QUERY STRING TO EXECUTE THE FOOD

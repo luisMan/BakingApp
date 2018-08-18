@@ -1,4 +1,4 @@
-package tech.niocoders.com.database;
+package tech.niocoders.com.fooddatabase;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -10,7 +10,7 @@ public class BakingContract  {
     the food database and maintain UI
     populated even if there is no Network connectivity
      */
- public static final String AUTHORITY = "tech.niocoders.com.database";
+ public static final String AUTHORITY = "tech.niocoders.com.fooddatabase";
  //our base content uri that will point to our database schema
  public static final Uri BASE_CONTENT_URI = Uri.parse("content://"+AUTHORITY);
  //this is our path to food table

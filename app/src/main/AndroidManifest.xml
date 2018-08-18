@@ -22,8 +22,8 @@
 
 
         <provider
-            android:name="tech.niocoders.com.database.BakingContentProvider"
-            android:authorities="tech.niocoders.com.database"
+            android:name="tech.niocoders.com.fooddatabase.BakingContentProvider"
+            android:authorities="tech.niocoders.com.fooddatabase"
             android:exported="false"/>
     </application>
 

@@ -1,4 +1,4 @@
-package tech.niocoders.com.database;
+package tech.niocoders.com.fooddatabase;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;

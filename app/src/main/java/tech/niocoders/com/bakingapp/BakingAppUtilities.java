@@ -1,9 +1,12 @@
 package tech.niocoders.com.bakingapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.util.DisplayMetrics;
+import android.view.Display;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +16,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 public class BakingAppUtilities {
+    public static final String TAG =  BakingAppUtilities.class.getSimpleName();
     public static final String JSON_URL =
             "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
@@ -27,7 +31,7 @@ public class BakingAppUtilities {
 
 
     //construct a Network Url with the static link
-    public URL getNetworkUri(String link)
+    public static URL getNetworkUri(String link)
     {
         Uri buildUri =  Uri.parse(JSON_URL)
                 .buildUpon().build();
@@ -60,5 +64,14 @@ public class BakingAppUtilities {
         }finally {
             urlConnection.disconnect();
         }
+    }
+
+
+    public static int calculateBestSpanCount(Context context, int posterWidth) {
+        Display display = ((Activity)context).getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        display.getMetrics(outMetrics);
+        float screenWidth = outMetrics.widthPixels;
+        return Math.round(screenWidth / posterWidth);
     }
 }
