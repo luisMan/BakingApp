@@ -1,5 +1,8 @@
 package tech.niocoders.com.fooddatabase;
 
+/*author luis manon
+Sqlite version 2*/
+
 public class BakingTableLiteralsConstant {
     //LETS CREATE THE QUERY STRING TO EXECUTE THE FOOD
 

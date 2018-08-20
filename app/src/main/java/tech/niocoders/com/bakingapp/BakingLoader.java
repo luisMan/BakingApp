@@ -8,9 +8,6 @@ import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.io.IOException;
-import java.net.URL;
-
 public class BakingLoader implements LoaderManager.LoaderCallbacks<String> {
 
     private static final int MAIN_FOOD_LOADER_ID=20;
@@ -110,11 +107,13 @@ public class BakingLoader implements LoaderManager.LoaderCallbacks<String> {
 
                 /* Parse the URL from the passed in String and perform the search */
                 try {
-                    URL foodUrl = BakingAppUtilities.getNetworkUri(searchQueryUrlString);
-                    String moviesSearchResults = BakingAppUtilities.getResponseJsonStringFromHttpUrl(foodUrl);
-                    return moviesSearchResults;
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+                    BakingAppUtilities.ExecuteRetrosfitCall(context);
+                    return "Success";
+
+                }catch (Exception d)
+                {
+                    d.printStackTrace();
                     return null;
                 }
             }
