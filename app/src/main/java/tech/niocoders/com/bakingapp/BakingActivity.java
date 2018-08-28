@@ -1,6 +1,10 @@
 package tech.niocoders.com.bakingapp;
 
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,7 +13,9 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import tech.niocoders.com.fooddatabase.BakingContract;
 import tech.niocoders.com.fooddatabase.FoodDatabaseAdapter;
+import tech.niocoders.com.task.BakingAppTaskLoader;
 
 public class BakingActivity extends AppCompatActivity implements FoodDatabaseAdapter.FoodItemClickListener{
 
@@ -17,13 +23,19 @@ public class BakingActivity extends AppCompatActivity implements FoodDatabaseAda
     public static RecyclerView food_recylcerview;
     public static ProgressBar network_progressbar;
     public static TextView error_message;
-
+    public static String RECYCLERVIEW_STATE = "RECYCLERVIEW_STATE";
+    public static String FOOD_NAME = "FOOD_NAME";
+    public static String FOOD_ID = "FOOD_ID";
+    public static String FOOD_AUTHOR = "FOOD_AUTHOR";
 
     //gridlayoutManager
     private GridLayoutManager layoutManager;
 
     //food adapter
     private FoodDatabaseAdapter mAdapter;
+
+    //food loader from DataBase with Cursor object
+    private BakingAppTaskLoader foodLoader;
 
 
     //our loader to load the text to populate dataBase
@@ -39,9 +51,7 @@ public class BakingActivity extends AppCompatActivity implements FoodDatabaseAda
         error_message =  findViewById(R.id.network_error);
 
         //lets construct our layout manager object
-        layoutManager =  new GridLayoutManager(this,
-                BakingAppUtilities.calculateBestSpanCount(this,
-                        Integer.parseInt(getResources().getString(R.string.image_width).toString())));
+        layoutManager =  new GridLayoutManager(this, GridLayoutManager.VERTICAL);
 
         //lets attach the recyclerView to our layoutManager
         food_recylcerview.setLayoutManager(layoutManager);
@@ -60,8 +70,25 @@ public class BakingActivity extends AppCompatActivity implements FoodDatabaseAda
     {
         mLoader =  new BakingLoader(this);
         //lets now execute the loader
+        //get data from the given url server to see if any new items has been added then populate mysql database
+        //adding all the missing elements
         mLoader.ExecuteLoader();
+
+        //now lets return the query of all the food and then add it to our RecyclerView
+        foodLoader = new BakingAppTaskLoader(this, getIntent().getExtras());
+
+        //lets see if we get any food images
     }
+
+    //getters
+    public static RecyclerView getFood_recylcerview() {
+        return food_recylcerview;
+    }
+    public FoodDatabaseAdapter getmAdapter() {
+        return mAdapter;
+    }
+
+
     //method to show network error
     public void ShowNetworkError()
     {
@@ -90,18 +117,59 @@ public class BakingActivity extends AppCompatActivity implements FoodDatabaseAda
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
+        if(!BakingAppUtilities.IsNetworkAvailable(getApplicationContext()))
+        {
+            ShowNetworkError();
+        }else {
+            RemoveNetworkError();
+            outState.putParcelable(RECYCLERVIEW_STATE, food_recylcerview.getLayoutManager().onSaveInstanceState());
+            super.onSaveInstanceState(outState, outPersistentState);
+        }
     }
 
 
     //override restoreInstance state
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        if(!BakingAppUtilities.IsNetworkAvailable(getApplicationContext()))
+        {
+            ShowNetworkError();
+        }else {
+            RemoveNetworkError();
+            if (savedInstanceState != null) {
+                Parcelable state = savedInstanceState.getParcelable(RECYCLERVIEW_STATE);
+                if (state != null) {
+                    HideLoader();
+                    food_recylcerview.getLayoutManager().onRestoreInstanceState(state);
+                }
+            }
+        }
         super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
-    public void ItemClick(int position) {
+    public void ItemClick(View view ,int position) {
+        //here we have the click even listener for our loader data
+        view.findViewById(R.id.food_id);
+        Cursor temp =  foodLoader.getmCursor();
+        if(temp!=null)
+        {
+            temp.moveToPosition(position);
+            String food_name =  temp.getString(temp.getColumnIndex(BakingContract.FoodEntry.COLUMN_FOOD_NAME)).toString();
+            int key =  temp.getInt(temp.getColumnIndex(BakingContract.FoodEntry.COLUMN_ID));
+            String author =  temp.getString(temp.getColumnIndex(BakingContract.FoodEntry.COLUMN_AUTHOR));
+            author  =  (author.equals(" ") ? "Unknown Author " : author);
+            //lets construct some explicit content to send between activities
 
+            Context tempContext =  BakingActivity.this;
+            Class childActivity =  FoodDescription.class;
+            Intent launcher =  new Intent(tempContext,childActivity);
+            launcher.putExtra(FOOD_NAME,food_name);
+            launcher.putExtra(FOOD_ID,key);
+            launcher.putExtra(FOOD_AUTHOR, author);
+            startActivity(launcher);
+
+
+        }
     }
 }

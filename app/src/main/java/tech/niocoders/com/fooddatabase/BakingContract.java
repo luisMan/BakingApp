@@ -27,6 +27,7 @@ public class BakingContract  {
      public static final Uri CONTENT_URI =
              BASE_CONTENT_URI.buildUpon().appendPath(PATH_FOOD).build();
      public static final String COLUMN_IMAGE = "image";
+     public static final String COLUMN_AUTHOR = "author";
      public static final String COLUMN_SERVINGS = "servings";
      public static final String COLUMN_ID="id";
      public static final String COLUMN_FOOD_NAME = "name";

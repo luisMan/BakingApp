@@ -7,7 +7,8 @@ public class BakingTableLiteralsConstant {
     //LETS CREATE THE QUERY STRING TO EXECUTE THE FOOD
 
     public static final String FOOD_TABLE = "CREATE TABLE "+BakingContract.PATH_FOOD+" ("
-            +BakingContract.FoodEntry.COLUMN_ID+" INTEGER NOT NULL PRIMARY KEY AUTO INCREMENT,"
+            +BakingContract.FoodEntry.COLUMN_ID+" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+            +BakingContract.FoodEntry.COLUMN_AUTHOR+" TEXT NOT NULL,"
             +BakingContract.FoodEntry.COLUMN_FOOD_NAME+ " TEXT NOT NULL,"
             +BakingContract.FoodEntry.COLUMN_IMAGE+" TEXT NOT NULL,"
             +BakingContract.FoodEntry.COLUMN_SERVINGS+" INTEGER);";

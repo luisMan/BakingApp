@@ -8,4 +8,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="backgroundImageView">
+        <item name="android:alpha">0.5</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+
+    <style name="BackgroundViews">
+        <item name="android:alpha">0.5</item>
+        <item  name="android:background">@color/colorDarkTransparent</item>
+    </style>
+
 </resources>

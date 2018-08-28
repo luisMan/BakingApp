@@ -21,7 +21,7 @@ public class FoodView extends RecyclerView.ViewHolder implements View.OnClickLis
         //cast the adapter
         this.context  =  context;
         this.adapter = adapter;
-        this.food_poster = itemView.findViewById(R.id.food_item);
+        this.food_poster = itemView.findViewById(R.id.picture);
         this.food_name =  itemView.findViewById(R.id.food_name);
         this.food_id =  itemView.findViewById(R.id.food_id);
         //set click listener to our View
@@ -32,6 +32,6 @@ public class FoodView extends RecyclerView.ViewHolder implements View.OnClickLis
     public void onClick(View view) {
       int position =  getAdapterPosition();
       //send back the click position to our Item Click listener method
-      adapter.listener.ItemClick(position);
+      adapter.listener.ItemClick(view,position);
     }
 }

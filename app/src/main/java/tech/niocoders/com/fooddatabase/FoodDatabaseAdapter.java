@@ -7,23 +7,24 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import tech.niocoders.com.bakingapp.BakingActivity;
-import tech.niocoders.com.bakingapp.PicassoSingleton;
 import tech.niocoders.com.bakingapp.R;
+import tech.niocoders.com.task.ImageLinkTask;
 
 public class FoodDatabaseAdapter extends RecyclerView.Adapter<FoodView> {
 
     //our Cursor and viewHolder counter
     public Cursor mCursor;
     public int ViewHolderCounter;
-
+    private ImageLinkTask linkTask;
 
     private Context context;
     public  FoodItemClickListener listener;
     public interface FoodItemClickListener
     {
-        void ItemClick(int position);
+        void ItemClick(View view,int position);
     }
 
 
@@ -64,9 +65,10 @@ public class FoodDatabaseAdapter extends RecyclerView.Adapter<FoodView> {
         activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
 
-        int width = (int)activity.getResources().getDimension(R.dimen.food_image_width);
-        int height = 400;
-        PicassoSingleton.populateImageView(image, holder.food_poster, width, height);
+        holder.food_poster.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        new ImageLinkTask(context,holder).execute(name);
+
+
     }
 
     @Override

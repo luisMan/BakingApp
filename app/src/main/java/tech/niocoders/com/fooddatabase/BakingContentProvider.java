@@ -14,6 +14,8 @@ public class BakingContentProvider extends ContentProvider {
     public static final int STEPS =  101;
     public static final int INGREDIENTS = 102;
     public static final int FOOD_WITH_ID = 103;
+    public static final int STEP_WITH_FOOD_ID = 104;
+    public static final int INGREDIENTS_WITH_FOOD_ID = 105;
     private Context context;
     private BakingDataBaseHelper helper;
 
@@ -26,6 +28,8 @@ public class BakingContentProvider extends ContentProvider {
          matcher.addURI(BakingContract.AUTHORITY,BakingContract.PATH_STEPS,STEPS);
          matcher.addURI(BakingContract.AUTHORITY,BakingContract.PATH_INGREDIENTS,INGREDIENTS);
          matcher.addURI(BakingContract.AUTHORITY,BakingContract.PATH_FOOD+"/#",FOOD_WITH_ID);
+         matcher.addURI(BakingContract.AUTHORITY,BakingContract.PATH_STEPS+"/#",STEP_WITH_FOOD_ID);
+         matcher.addURI(BakingContract.AUTHORITY,BakingContract.PATH_INGREDIENTS+"/#",INGREDIENTS_WITH_FOOD_ID);
      return matcher;
     }
 
@@ -61,6 +65,24 @@ public class BakingContentProvider extends ContentProvider {
                 break;
             case FOOD_WITH_ID:
                 retCursor = db.query(BakingContract.PATH_FOOD,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case STEP_WITH_FOOD_ID:
+                retCursor = db.query(BakingContract.PATH_STEPS,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case INGREDIENTS_WITH_FOOD_ID:
+                retCursor = db.query(BakingContract.PATH_INGREDIENTS,
                         projection,
                         selection,
                         selectionArgs,

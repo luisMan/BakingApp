@@ -13,9 +13,15 @@ public class PicassoSingleton{
 
     public static void populateImageView(String url, ImageView view, int w,int h)
     {
-        Picasso.get()
-                .load(url)
-                .resize(w, h)
-                .into(view);
+        try {
+            Picasso.get()
+                    .load(url)
+                    .resize(w, h)
+                    .centerCrop()
+                    .into(view);
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">BakingApp</string>
     <string name="no_network">Network Error!</string>
-    <string name="image_width">700</string>
+    <string name="image_width">900</string>
+    <string name="image_height">430</string>
+    <string name="food_Description">Tutorial Description</string>
 </resources>
