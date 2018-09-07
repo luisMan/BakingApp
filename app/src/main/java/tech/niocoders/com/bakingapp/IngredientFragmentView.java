@@ -11,11 +11,11 @@ import java.util.ArrayList;
 
 import tech.niocoders.com.task.Ingredients;
 
-public class FragmentView extends BaseAdapter{
+public class IngredientFragmentView extends BaseAdapter{
     private int index;
     private Context context;
     private ArrayList<Ingredients>data;
-    public FragmentView(Context context, ArrayList<Ingredients>data)
+    public IngredientFragmentView(Context context, ArrayList<Ingredients>data)
     {
         this.context =context;
         this.data=data;

@@ -157,6 +157,8 @@ public class BakingActivity extends AppCompatActivity implements FoodDatabaseAda
             temp.moveToPosition(position);
             String food_name =  temp.getString(temp.getColumnIndex(BakingContract.FoodEntry.COLUMN_FOOD_NAME)).toString();
             int key =  temp.getInt(temp.getColumnIndex(BakingContract.FoodEntry.COLUMN_ID));
+            //lets set the shared preference for our name of the food item and the key
+            Preference.saveFoodIdAndKey(this, Integer.toString(key),food_name);
             String author =  temp.getString(temp.getColumnIndex(BakingContract.FoodEntry.COLUMN_AUTHOR));
             author  =  (author.equals(" ") ? "Unknown Author " : author);
             //lets construct some explicit content to send between activities

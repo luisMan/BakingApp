@@ -5,28 +5,29 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
@@ -36,16 +37,22 @@ public class videoPlayer extends Fragment implements ExoPlayer.EventListener {
     private Context context;
     private PlayerView simplePlayerView;
     private SimpleExoPlayer player;
+    private boolean shouldAutoPlay;
+    private BandwidthMeter bandwidthMeter;
+    private DefaultTrackSelector trackSelector;
+    private DataSource.Factory mediaDataSourceFactory;
     private String url;
-    private boolean playWhenReady = true;
+    private boolean playWhenReady;
     //must be initialized to 0
-    private long playbackPosition=0;
-    private int currentWindow = 0;
+    private long playbackPosition;
+    private int currentWindow;
     private MediaSource  mediaSource;
     public String VIDEO_PLAYER_STR= "VIDEO_PLAYER_STR";
     public String VIDEO_PLAYER_POSITION = "VIDEO_PLAYER_POSITION";
     public String VIDEO_PLAYER_CURRENT_WINDOW = "VIDEO_PLAYER_CURRENT_WINDOW";
+    public String VIDEO_PLAY_WHEN_READY="VIDEO_PLAY_WHEN_READY";
     private String TAG = videoPlayer.class.getSimpleName();
+    public Bundle globalState;
 
 
     //leave this constructor empty so that our FragmentManager instantiate the work
@@ -66,39 +73,68 @@ public class videoPlayer extends Fragment implements ExoPlayer.EventListener {
     }
 
     private void initializePlayer() {
-        // Create an instance of the ExoPlayer.
-        TrackSelector trackSelector = new DefaultTrackSelector();
-        LoadControl loadControl = new DefaultLoadControl();
-        player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
-        simplePlayerView.setPlayer(player);
+        if(player==null) {
 
-        // Set the ExoPlayer.EventListener to this activity.
-        player.addListener(this);
+            if(globalState!=null) {
+                currentWindow = globalState.getInt(VIDEO_PLAYER_CURRENT_WINDOW);
+                playbackPosition = globalState.getLong(VIDEO_PLAYER_POSITION);
+                playWhenReady = globalState.getBoolean(VIDEO_PLAY_WHEN_READY);
+            }
 
-        // Prepare the MediaSource.
-        Uri uri =  Uri.parse(url).buildUpon().build();
-        mediaSource =  buildMediaSource(uri);
-        player.prepare(mediaSource);
-        player.setPlayWhenReady(true);
-        player.seekTo(currentWindow, playbackPosition);
+            bandwidthMeter = new DefaultBandwidthMeter();
+            TrackSelection.Factory videoTrackSelectionFactory =
+                    new AdaptiveTrackSelection.Factory(bandwidthMeter);
+            trackSelector =
+                    new DefaultTrackSelector(videoTrackSelectionFactory);
+
+
+            player = ExoPlayerFactory.newSimpleInstance(getActivity().getBaseContext(), trackSelector);
+
+            simplePlayerView.setPlayer(player);
+
+            player.setPlayWhenReady(playWhenReady);
+
+            // Set the ExoPlayer.EventListener to this activity.
+            player.addListener(this);
+
+            // Prepare the MediaSource.
+            Uri uri = Uri.parse(url).buildUpon().build();
+            mediaSource = buildMediaSource(uri);
+
+            boolean containStartingPosition = currentWindow != C.INDEX_UNSET;
+            if (containStartingPosition) {
+                player.seekTo(currentWindow, playbackPosition);
+            }
+
+            player.prepare(mediaSource, !containStartingPosition, false);
+        }
     }
 
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,  Bundle savedInstanceState) {
+
+
         if(savedInstanceState!=null)
         {
             url =  savedInstanceState.getString(VIDEO_PLAYER_STR);
             currentWindow =  savedInstanceState.getInt(VIDEO_PLAYER_CURRENT_WINDOW);
             playbackPosition =  savedInstanceState.getLong(VIDEO_PLAYER_POSITION);
-            Toast.makeText(getActivity().getBaseContext(),"createView The current Step index "+playbackPosition,Toast.LENGTH_LONG).show();
+            playWhenReady = savedInstanceState.getBoolean(VIDEO_PLAY_WHEN_READY);
+            globalState = savedInstanceState;
+
+         }else{
+
+                playWhenReady = true;
+                currentWindow = 0;
+                playbackPosition = 0;
 
         }
 
         View view =  inflater.inflate(R.layout.video_xml,container,false);
         simplePlayerView = view.findViewById(R.id.exoplayer);
 
+        shouldAutoPlay = true;
         return view;
     }
 
@@ -116,7 +152,7 @@ public class videoPlayer extends Fragment implements ExoPlayer.EventListener {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume Fragment");
-        if ((Util.SDK_INT <= 23 && !TextUtils.isEmpty(url))) {
+        if ((Util.SDK_INT <= 23 || player == null)) {
             initializePlayer();
         }
     }
@@ -125,8 +161,6 @@ public class videoPlayer extends Fragment implements ExoPlayer.EventListener {
     public void onPause() {
         Log.d(TAG, "onPause Fragment");
         super.onPause();
-        playbackPosition = player.getCurrentPosition();
-        currentWindow =  player.getCurrentWindowIndex();
         if (Util.SDK_INT <= 23) {
             releasePlayer();
         }
@@ -144,6 +178,9 @@ public class videoPlayer extends Fragment implements ExoPlayer.EventListener {
 
     private void releasePlayer() {
         if (player != null) {
+            currentWindow =  player.getCurrentWindowIndex();
+            playbackPosition = player.getCurrentPosition();
+            playWhenReady =  player.getPlayWhenReady();
             player.release();
             player = null;
         }
@@ -157,14 +194,16 @@ public class videoPlayer extends Fragment implements ExoPlayer.EventListener {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Toast.makeText(getActivity().getBaseContext(),"savedInstace The current Step index "+player.getCurrentPosition(),Toast.LENGTH_LONG).show();
+            outState.putString(VIDEO_PLAYER_STR,url);
+            currentWindow =  player.getCurrentWindowIndex();
+            playbackPosition = player.getCurrentPosition();
+            playWhenReady =  player.getPlayWhenReady();
 
-        outState.putString(VIDEO_PLAYER_STR,url);
-        if(player!=null)
-        {
-            outState.putLong(VIDEO_PLAYER_POSITION, player.getCurrentPosition());
-            outState.putInt(VIDEO_PLAYER_CURRENT_WINDOW,player.getCurrentWindowIndex());
-        }
+
+            outState.putBoolean(VIDEO_PLAY_WHEN_READY,playWhenReady);
+            outState.putLong(VIDEO_PLAYER_POSITION,playbackPosition);
+            outState.putInt(VIDEO_PLAYER_CURRENT_WINDOW,currentWindow);
+
         super.onSaveInstanceState(outState);
     }
 
@@ -176,8 +215,9 @@ public class videoPlayer extends Fragment implements ExoPlayer.EventListener {
         {
                 currentWindow =  savedInstanceState.getInt(VIDEO_PLAYER_CURRENT_WINDOW);
                 playbackPosition =  savedInstanceState.getLong(VIDEO_PLAYER_POSITION);
-                Toast.makeText(getActivity().getBaseContext(),"restored The current Step index "+playbackPosition,Toast.LENGTH_LONG).show();
-
+                playWhenReady = savedInstanceState.getBoolean(VIDEO_PLAY_WHEN_READY);
+               // Toast.makeText(getActivity().getBaseContext(),"restored The current Step index "+playbackPosition,Toast.LENGTH_LONG).show();
+                globalState =  savedInstanceState;
         }
     }
 

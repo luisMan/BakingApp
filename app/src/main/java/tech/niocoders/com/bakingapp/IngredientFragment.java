@@ -18,7 +18,7 @@ public class IngredientFragment extends Fragment{
     private String INGREDIENTS_TAG = "INGREDIENTS_TAG";
 
     //MUST BE EMPTY SO THE FRAGMENT MANAGER CAN INSTANTIATE THE FRAGMENT CLASS
-   public IngredientFragment(){};
+   public IngredientFragment(){}
 
     public void setIngridients(ArrayList<Ingredients> ingridients) {
         this.ingridients = ingridients;
@@ -35,7 +35,7 @@ public class IngredientFragment extends Fragment{
         }
         View view =  inflater.inflate(R.layout.fragments_ingredient_part,container,false);
         GridView ingredientsRecycle = view.findViewById(R.id.ingredients_part_fragment);
-        FragmentView fragmentAdapter =  new FragmentView(getContext(),ingridients);
+        IngredientFragmentView fragmentAdapter =  new IngredientFragmentView(getContext(),ingridients);
         ingredientsRecycle.setAdapter(fragmentAdapter);
 
         return view;
