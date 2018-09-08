@@ -7,6 +7,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <!-- android:textColorPrimary is the color of the title text in the Toolbar  -->
+        <item name="android:textColorPrimary">@color/colorAccent</item>
+    </style>
 
     <style name="backgroundImageView">
         <item name="android:alpha">0.5</item>

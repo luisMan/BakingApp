@@ -29,7 +29,7 @@ public class BakingTableLiteralsConstant {
             +BakingContract.StepsEntry.COLUMN_STEP_NUMBER+" INTEGER NOT NULL,"
             +BakingContract.StepsEntry.COLUMN_STEP_SHORTDESC+" TEXT NOT NULL,"
             +BakingContract.StepsEntry.COLUMN_STEP_DESCRIPTION+" TEXT NOT NULL,"
-            +BakingContract.StepsEntry.COLUMN_STEP_THUMBNAIL+" TEXT NOT NULL,"
+            +BakingContract.StepsEntry.COLUMN_STEP_THUMBNAIL+" TEXT,"
             +BakingContract.StepsEntry.COLUMN_STEP_VIDEO_URL+" TEXT NOT NULL,"
             +"FOREIGN KEY ("+BakingContract.StepsEntry.COLUMN_STEP_FOOD_ID+") REFERENCES "
             +BakingContract.PATH_FOOD+"("+BakingContract.FoodEntry.COLUMN_ID+") ON DELETE CASCADE);";

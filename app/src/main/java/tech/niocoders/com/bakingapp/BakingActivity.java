@@ -2,6 +2,7 @@ package tech.niocoders.com.bakingapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -51,7 +52,12 @@ public class BakingActivity extends AppCompatActivity implements FoodDatabaseAda
         error_message =  findViewById(R.id.network_error);
 
         //lets construct our layout manager object
-        layoutManager =  new GridLayoutManager(this, GridLayoutManager.VERTICAL);
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            layoutManager =  new GridLayoutManager(this, BakingAppUtilities.calculateBestSpanCount(this,800));
+        }else{
+            layoutManager =  new GridLayoutManager(this, GridLayoutManager.VERTICAL);
+        }
+
 
         //lets attach the recyclerView to our layoutManager
         food_recylcerview.setLayoutManager(layoutManager);

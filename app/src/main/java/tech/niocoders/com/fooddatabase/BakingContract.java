@@ -58,7 +58,7 @@ public class BakingContract  {
      public static final String COLUMN_STEP_SHORTDESC  = "shortDesc";
      public static final String COLUMN_STEP_DESCRIPTION = "description";
      public static final String COLUMN_STEP_VIDEO_URL  = "video_url";
-     public static final String COLUMN_STEP_THUMBNAIL  =" thumbNail";
+     public static final String COLUMN_STEP_THUMBNAIL  ="thumbnail";
      public static final String COLUMN_STEP_FOOD_ID = "food_id";
  }
 

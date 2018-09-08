@@ -5,11 +5,9 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.support.annotation.Nullable;
 
 import tech.niocoders.com.bakingapp.R;
-import tech.niocoders.com.fooddatabase.BakingContract;
 
 public class BakingWidgetService extends IntentService {
     public static final String ACTION_UPDATE_FOOD_INGREDIENTS = "widget.action.update_ingredient";
@@ -27,7 +25,6 @@ public class BakingWidgetService extends IntentService {
             if (ACTION_START_FOOD_INGREDIENTS.equals(action)) {
                 final String food_id = intent.getStringExtra(ID_EXTRA);
                 final String food_name =  intent.getStringExtra(NAME_EXTRA);
-
                  handleActionUpdateBakingWidgets(food_id,food_name);
             }
         }
@@ -38,7 +35,7 @@ public class BakingWidgetService extends IntentService {
         intent.setAction(ACTION_START_FOOD_INGREDIENTS);
         intent.putExtra(ID_EXTRA, food_id);
         intent.putExtra(NAME_EXTRA,name);
-       // context.startService(intent);
+        context.startService(intent);
     }
 
 
@@ -47,24 +44,10 @@ public class BakingWidgetService extends IntentService {
     public void handleActionUpdateBakingWidgets(String food_id, String name)
     {
 
-        Cursor cursor = getContentResolver().query(
-                BakingContract.IngredientsEntry.CONTENT_URI,
-                null,
-                BakingContract.IngredientsEntry.COLUMN_FOOD_ID+"=?",
-                new String[]{food_id},
-                null
-        );
-
-        if (cursor != null && cursor.getCount() > 0) {
-            cursor.moveToFirst();
-
-            cursor.close();
-        }
-
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, BakingWidgetProvider.class));
         //Trigger data update to handle the GridView widgets and force a data refresh
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_ingredients_view);
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_food_name);
         //Now update all widgets
         BakingWidgetProvider.updateFoodWidgets(this, appWidgetManager,name,food_id,appWidgetIds);
     }

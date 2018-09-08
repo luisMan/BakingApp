@@ -42,6 +42,8 @@ public class FoodDescription extends AppCompatActivity implements BakingAppSteps
     public TextView author;
     @BindView(R.id.TutorialStep)
     public TextView tutorialSteps;
+    @BindView(R.id.foodName)
+    public TextView invisbleCheckFoodName;
     public Cursor steps;
     public Cursor ingredients;
     public int currentTutorialStepIndex;
@@ -82,16 +84,25 @@ public class FoodDescription extends AppCompatActivity implements BakingAppSteps
         tutorialPagerRecyclerView.setAdapter(mStepAdapter);
 
 
-        if(getIntent()!=null) {
+        if(savedInstanceState!=null) {
 
             String food_name = getIntent().getExtras().getString(BakingActivity.FOOD_NAME);
             String aut = getIntent().getExtras().getString(BakingActivity.FOOD_AUTHOR);
             Database_food_key_id =  ""+getIntent().getExtras().getInt(BakingActivity.FOOD_ID);
-            Log.d("activity",food_name+"  "+Database_food_key_id);
             this.getSupportActionBar().setTitle(food_name);
             author.setText("Author : " +aut);
+            invisbleCheckFoodName.setText(food_name);
+            tutorialSteps.setText("Current Step : "+currentTutorialStepIndex);
+        }else{
+            String food_name = Preference.getPreferenceFoodName(this);
+            String aut = "Unknown author";
+            Database_food_key_id =  Preference.getPreferenceFoodId(this);
+            this.getSupportActionBar().setTitle(food_name);
+            author.setText("Author : " +aut);
+            invisbleCheckFoodName.setText(food_name);
             tutorialSteps.setText("Current Step : "+currentTutorialStepIndex);
         }
+
 
         //int cursors to populate steps and ingredients from data base
 
@@ -109,18 +120,20 @@ public class FoodDescription extends AppCompatActivity implements BakingAppSteps
         steps = context.getContentResolver().query(BakingStepUri, null, BakingContract.StepsEntry.COLUMN_STEP_FOOD_ID+"=?", SelectionArgs, null);
         ingredients = context.getContentResolver().query(BakingIngredientsUri, null, BakingContract.IngredientsEntry.COLUMN_FOOD_ID+"=?",SelectionArgs,null);
         Log.d("activity",steps.getCount()+"  "+ingredients.getCount());
-        populateStepsUI();
-        populateIngredientUI();
+       if(savedBundle==null) {
+           populateStepsUI();
+           populateIngredientUI();
+       }
 
     }
 
-    public void GetImageIfVideoIsEmpty(String food_name)
+    public void GetImageIfVideoIsEmpty(String food_name,String video_url)
     {
-        if(TextUtils.isEmpty(""))
+        if(TextUtils.isEmpty(video_url))
         {
             new ImageLinkTask(context,thumbnail).execute(food_name);
         }else{
-            String url =  BakingAppUtilities.getNetworkUri(" ").toString();
+            String url =  BakingAppUtilities.getNetworkUri(video_url).toString();
             DisplayMetrics displayMetrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
             int height = displayMetrics.heightPixels;
@@ -138,17 +151,36 @@ public class FoodDescription extends AppCompatActivity implements BakingAppSteps
             descriptionFragment = new DescriptionFragment();
             descriptionFragment.setShortAndFullDescription(shortDesc,fullDesc);
             fragmentManager.beginTransaction()
-                    .add(R.id.steps_list, descriptionFragment)
-                    .commit();
-
-        }else{
-
-            descriptionFragment = (DescriptionFragment) getSupportFragmentManager().getFragment(savedBundle,DETAIL_FRAGMENT);
-            fragmentManager.beginTransaction()
                     .replace(R.id.steps_list, descriptionFragment)
                     .commit();
 
+        }else{
+             if(descriptionFragment!=null || descriptionFragment==null) {
+                 descriptionFragment =  new DescriptionFragment();
+                 descriptionFragment.setShortAndFullDescription(shortDesc,fullDesc);
+                 fragmentManager.beginTransaction()
+                        .replace(R.id.steps_list, descriptionFragment)
+                        .commit();
+            }
         }
+    }
+
+
+    //onRestoreInstanceState Keep playing video
+    public void KeepPlayingVideoOnRestoreState()
+    {
+        if(savedBundle!=null) {
+
+
+            tutorialSteps.setText("Current Step : "+currentTutorialStepIndex);
+            mStepAdapter.swapCursor(steps);
+            fragmentPlayer = (videoPlayer) getSupportFragmentManager().getFragment(savedBundle, PLAYER_FRAGMENT);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.videoFrameLayout, fragmentPlayer)
+                    .commit();
+        }
+
     }
 
     //populateVideoFragment method
@@ -161,22 +193,14 @@ public class FoodDescription extends AppCompatActivity implements BakingAppSteps
             videoFrameLayout.addView(noVideoImageView);
             noVideoImageView.setVisibility(View.VISIBLE);
             new ImageLinkTask(context,noVideoImageView).execute(food_name);
-            Toast.makeText(context,"The video url is empty ", Toast.LENGTH_LONG).show();
+            Toast.makeText(context,"There is not existing video tutorial for this item "+food_name, Toast.LENGTH_LONG).show();
         }else{
             noVideoImageView.setVisibility(View.INVISIBLE);
-
-
             FragmentManager fragmentManager =  getSupportFragmentManager();
-            if(savedBundle==null) {
+            if(savedBundle==null||savedBundle!=null) {
                 fragmentPlayer = new videoPlayer();
                 fragmentPlayer.setContext(this);
                 fragmentPlayer.setUrl(video_url);
-                fragmentManager.beginTransaction()
-                        .add(R.id.videoFrameLayout, fragmentPlayer)
-                        .commit();
-
-            }else{
-                fragmentPlayer = (videoPlayer)getSupportFragmentManager().getFragment(savedBundle,PLAYER_FRAGMENT);
                 fragmentManager.beginTransaction()
                         .replace(R.id.videoFrameLayout, fragmentPlayer)
                         .commit();
@@ -206,11 +230,11 @@ public class FoodDescription extends AppCompatActivity implements BakingAppSteps
             //String thumb =  steps.getString(steps.getColumnIndex(BakingContract.StepsEntry.COLUMN_STEP_THUMBNAIL));
             String video_url = steps.getString(steps.getColumnIndex(BakingContract.StepsEntry.COLUMN_STEP_VIDEO_URL));
             tutorialSteps.setText("Page : "+number);
+            invisbleCheckFoodName.setText(sdesc);
 
 
             //get image to display if video is empty
-            GetImageIfVideoIsEmpty(food_name);
-
+            GetImageIfVideoIsEmpty(food_name,"");
             //here we will start a new fragment with different views to input
             populateDescriptionFragment(sdesc,desc);
             //lets add the video to our fragment view
@@ -245,7 +269,7 @@ public class FoodDescription extends AppCompatActivity implements BakingAppSteps
 
             FragmentManager fragmentManager =  getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .add(R.id.ingredients_fragments,fragment)
+                    .replace(R.id.ingredients_fragments,fragment)
                     .commit();
 
 
@@ -258,6 +282,7 @@ public class FoodDescription extends AppCompatActivity implements BakingAppSteps
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(PAGE_INDEX, currentTutorialStepIndex);
+        outState.putString(BakingActivity.FOOD_ID,Database_food_key_id);
         outState.putIntArray("MOVIE_SCROLL_POSITION",
                 new int[]{ xyPosition.getScrollX(), xyPosition.getScrollY()});
 
@@ -271,7 +296,11 @@ public class FoodDescription extends AppCompatActivity implements BakingAppSteps
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if(savedInstanceState!=null) {
+            //this.savedBundle =  savedInstanceState;
+            context = this.getApplicationContext();
+            this.savedBundle =  savedInstanceState;
             currentTutorialStepIndex = savedInstanceState.getInt(PAGE_INDEX);
+            Database_food_key_id =  savedInstanceState.getString(BakingActivity.FOOD_ID);
              final int[] position = savedInstanceState.getIntArray("MOVIE_SCROLL_POSITION");
             if (position != null)
                 xyPosition.post(new Runnable() {
@@ -279,9 +308,14 @@ public class FoodDescription extends AppCompatActivity implements BakingAppSteps
                         xyPosition.scrollTo(position[0], position[1]);
                     }
                 });
-        }
 
-        initCursorLoaders();
+
+            descriptionFragment = (DescriptionFragment) getSupportFragmentManager().getFragment(savedBundle,DETAIL_FRAGMENT);
+            KeepPlayingVideoOnRestoreState();
+            populateIngredientUI();
+
+
+        }
 
     }
 
@@ -291,7 +325,7 @@ public class FoodDescription extends AppCompatActivity implements BakingAppSteps
     public void PagerClickListener(View v, int position) {
         //this is the listener that will make our page change to populate the fragments
         currentTutorialStepIndex = position;
-        Toast.makeText(context,"The pager clicked is  = "+currentTutorialStepIndex,Toast.LENGTH_LONG).show();
+
         populateStepsUI();
 
     }

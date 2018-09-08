@@ -6,16 +6,17 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import tech.niocoders.com.bakingapp.BakingActivity;
 import tech.niocoders.com.bakingapp.FoodDescription;
 import tech.niocoders.com.bakingapp.Preference;
 import tech.niocoders.com.bakingapp.R;
+import tech.niocoders.com.fooddatabase.BakingContract;
 
 public class BakingWidgetProvider extends AppWidgetProvider {
 
@@ -24,7 +25,6 @@ public class BakingWidgetProvider extends AppWidgetProvider {
 
         Intent launcher;
         if(!TextUtils.isEmpty(food_id) && !TextUtils.isEmpty(food_name)) {
-            Log.d(BakingWidgetProvider.class.getSimpleName(), "food_id=" + food_id+" food_name = "+food_name);
             launcher = new Intent(context, FoodDescription.class);
             launcher.putExtra(BakingActivity.FOOD_NAME, food_name);
             launcher.putExtra(BakingActivity.FOOD_ID,food_id);
@@ -37,24 +37,40 @@ public class BakingWidgetProvider extends AppWidgetProvider {
 
         RemoteViews myView = new RemoteViews(context.getPackageName(),R.layout.food_widget);
         myView.setTextViewText(R.id.widget_food_name,food_name);
+        myView.setTextViewText(R.id.ingredients,getIngredientsBaseOnFoodSelected(context));
+
         myView.setOnClickPendingIntent(R.id.widget_food_name,pendingIntent);
-        //initialize the gridview as well
-        Intent AllIngredients = new Intent(context, BakingRemoteView.class);
-        // AllIngredients.setAction(BakingWidgetService.ACTION_START_FOOD_INGREDIENTS);
-        //lets pass the current widget id on this intent
-        AllIngredients.putExtra(BakingWidgetService.ID_EXTRA, food_id);
-        AllIngredients.putExtra(BakingWidgetService.NAME_EXTRA,food_name);
-        // Bind the remote adapter
-        myView.setRemoteAdapter(R.id.ingredients_list, AllIngredients);
-
-        PendingIntent IngridientsIntent = PendingIntent.getService(context, 0, AllIngredients, PendingIntent.FLAG_UPDATE_CURRENT);
-        myView.setOnClickPendingIntent(R.id.ingredients_list, IngridientsIntent);
-
+        myView.setOnClickPendingIntent(R.id.ingredients,pendingIntent);
 
         appWidgetManager.updateAppWidget(appWidgetId, myView);
 
 
 
+    }
+
+    public static  String getIngredientsBaseOnFoodSelected(Context context)
+    {
+        StringBuilder textIngredients = new StringBuilder();
+        String id = Preference.getPreferenceFoodId(context);
+        String [] selectionArgs =  {id};
+        Cursor mCursor = context.getContentResolver().query(
+                BakingContract.IngredientsEntry.CONTENT_URI, null,
+                BakingContract.IngredientsEntry.COLUMN_FOOD_ID+"=?",
+                selectionArgs,
+                null
+        );
+
+        for(int i=0; i<mCursor.getCount(); i++)
+        {
+            mCursor.moveToPosition(i);
+            String description =  mCursor.getString(mCursor.getColumnIndex(BakingContract.IngredientsEntry.COLUMN_FOOD_INGREDIENT));
+            String measure =  mCursor.getString(mCursor.getColumnIndex(BakingContract.IngredientsEntry.COLUMN_FOOD_MEASURE));
+            String quantity =  mCursor.getString(mCursor.getColumnIndex(BakingContract.IngredientsEntry.COLUMN_FOOD_QUANTITY));
+            textIngredients.append(description+" "+measure+" "+quantity+"\n");
+        }
+
+        mCursor.close();
+        return textIngredients.toString();
     }
 
     public static void updateFoodWidgets(Context context, AppWidgetManager appWidgetManager,String food_name,String food_id, int[] appWidgetIds) {
@@ -96,12 +112,7 @@ public class BakingWidgetProvider extends AppWidgetProvider {
         return views;
     }*/
 
-    /**
-     * Creates and returns the RemoteViews to be displayed in the GridView mode widget
-     *
-     * @param context The context
-     * @return The RemoteViews for the GridView mode widget
-     */
+
    /* private static RemoteViews getFoodListRemoteView(Context context) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.ingredient_widget_view);
         // Set the GridWidgetService intent to act as the adapter for the GridView

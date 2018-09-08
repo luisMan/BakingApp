@@ -5,6 +5,6 @@
     <color name="colorAccent">#EEEEEE</color>
     <color name="colorPrimaryLight">#F3E5F5</color>
     <color  name="colorAccentTransparent">#ccECEFF1</color>
-    <color name="colorDarkTransparent">#cc000000</color>
+    <color name="colorDarkTransparent">#80000000</color>
     <color name="error">#FF3D00</color>
 </resources>

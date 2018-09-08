@@ -9,12 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import java.util.ArrayList;
-
-import tech.niocoders.com.task.Ingredients;
-
 public class DescriptionFragment extends Fragment {
-    private ArrayList<Ingredients> ingridients;
     private String TAG= DescriptionFragment.class.getSimpleName();
     private String SHORT_DESC = "SHORT_DESC";
     private String FULL_DESC = "FULL_DESC";
@@ -40,6 +35,7 @@ public class DescriptionFragment extends Fragment {
         {
             short_desc =  savedInstanceState.getString(SHORT_DESC);
             full_Desc =  savedInstanceState.getString(FULL_DESC);
+
         }
         View view =  inflater.inflate(R.layout.fragments_description_type,container,false);
         RelativeLayout descriptions = view.findViewById(R.id.description_part);
@@ -51,9 +47,23 @@ public class DescriptionFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(SHORT_DESC,short_desc);
         outState.putString(FULL_DESC,full_Desc);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState!=null) {
+            short_desc = savedInstanceState.getString(SHORT_DESC);
+            full_Desc = savedInstanceState.getString(FULL_DESC);
+        }
     }
 }

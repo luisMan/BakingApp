@@ -201,6 +201,7 @@ public class BakingAppUtilities {
                         Log.d("Food"," for food "+food.getName());
                         for(Steps st : food.getSteps())
                         {
+
                             ContentValues steps = new ContentValues();
                             steps.put(BakingContract.StepsEntry.COLUMN_STEP_FOOD_ID, id);
                             steps.put(BakingContract.StepsEntry.COLUMN_STEP_NUMBER, st.getId());

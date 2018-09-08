@@ -48,9 +48,9 @@
 
         <service android:name="widget.BakingWidgetService" />
 
-        <service
+        <!-- I disabled this service since it was crashing my app all the time<service
             android:name="widget.BakingRemoteView"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
+            android:permission="android.permission.BIND_REMOTEVIEWS" />-->
 
     </application>
 

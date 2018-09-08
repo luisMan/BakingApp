@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/backgroundImageView"/>
+    <ScrollView
+        android:id="@+id/mainScroll"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="400dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/topBarText"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/TutorialStep"
+                android:layout_width="150dp"
+                android:layout_height="55dp"
+                android:background="@color/colorAccent"
+                android:text=""
+                android:textSize="30sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:layout_editor_absoluteY="8dp" />
+            <TextView
+                android:id="@+id/foodName"
+                android:layout_width="match_parent"
+                android:layout_height="53dp"
+                android:background="@color/colorAccent"
+                android:text=""
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:layout_editor_absoluteY="8dp" />
+
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/tutorial_pages"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="76dp" />
+
+        <FrameLayout
+            android:id="@+id/ingredients_fragments"
+            android:layout_width="match_parent"
+            android:layout_height="450dp"
+
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="#99000000"/>
+
+    </LinearLayout>
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/darker_gray" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topBar"
+        app:layout_constraintVertical_bias="0.841">
+
+        <FrameLayout
+            android:id="@+id/videoFrameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp">
+
+            <ImageView
+                android:id="@+id/no_video"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/steps_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@color/colorDarkTransparent"></FrameLayout>
+
+        <TextView
+            android:id="@+id/Author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent"
+            android:textSize="20sp"/>
+    </LinearLayout>
+
+</LinearLayout>
+    </ScrollView>
+</RelativeLayout>

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -13,7 +14,9 @@ import android.widget.RemoteViewsService;
 import tech.niocoders.com.bakingapp.Preference;
 import tech.niocoders.com.bakingapp.R;
 import tech.niocoders.com.fooddatabase.BakingContract;
-
+/*I was trying to add the remote view object but my widget was giving me a lot of problems thus I decide to
+show all the ingredients as text 
+ */
 public class BakingRemoteView extends RemoteViewsService {
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
@@ -30,7 +33,6 @@ class BakingViewFactory implements RemoteViewsService.RemoteViewsFactory {
 
     public BakingViewFactory(Context applicationContext) {
         mContext = applicationContext;
-        id = Preference.getPreferenceFoodId(applicationContext);
     }
 
     @Override
@@ -44,6 +46,7 @@ class BakingViewFactory implements RemoteViewsService.RemoteViewsFactory {
     public void onDataSetChanged() {
 
         if (mCursor != null) mCursor.close();
+        id = Preference.getPreferenceFoodId(mContext);
         String [] selectionArgs =  {id};
         mCursor = mContext.getContentResolver().query(
                 BakingContract.IngredientsEntry.CONTENT_URI, null,
@@ -78,7 +81,6 @@ class BakingViewFactory implements RemoteViewsService.RemoteViewsFactory {
         String description =  mCursor.getString(mCursor.getColumnIndex(BakingContract.IngredientsEntry.COLUMN_FOOD_INGREDIENT));
         String measure =  mCursor.getString(mCursor.getColumnIndex(BakingContract.IngredientsEntry.COLUMN_FOOD_MEASURE));
         String quantity =  mCursor.getString(mCursor.getColumnIndex(BakingContract.IngredientsEntry.COLUMN_FOOD_QUANTITY));
-        mCursor.close();
         Log.d(BakingRemoteView.class.getSimpleName(),"desc = "+description+" measure = "+measure+" quantity = "+quantity);
 
         RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.ingredient_view);
@@ -87,11 +89,11 @@ class BakingViewFactory implements RemoteViewsService.RemoteViewsFactory {
         views.setTextViewText(R.id.quantity, ""+quantity);
 
         // Fill in the onClick PendingIntent Template using the specific plant Id for each item individually
-       /* Bundle extras = new Bundle();
+        Bundle extras = new Bundle();
         extras.putString(ID_EXTRA, id);
         Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
-        views.setOnClickFillInIntent(R.id.widget_plant_image, fillInIntent);*/
+        views.setOnClickFillInIntent(R.id.Ingredient_text, fillInIntent);
 
         return views;
 

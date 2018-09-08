@@ -176,7 +176,7 @@ public class videoPlayer extends Fragment implements ExoPlayer.EventListener {
     }
 
 
-    private void releasePlayer() {
+    public void releasePlayer() {
         if (player != null) {
             currentWindow =  player.getCurrentWindowIndex();
             playbackPosition = player.getCurrentPosition();
@@ -195,9 +195,11 @@ public class videoPlayer extends Fragment implements ExoPlayer.EventListener {
     @Override
     public void onSaveInstanceState(Bundle outState) {
             outState.putString(VIDEO_PLAYER_STR,url);
-            currentWindow =  player.getCurrentWindowIndex();
-            playbackPosition = player.getCurrentPosition();
-            playWhenReady =  player.getPlayWhenReady();
+            if(player!=null) {
+                currentWindow = player.getCurrentWindowIndex();
+                playbackPosition = player.getCurrentPosition();
+                playWhenReady = player.getPlayWhenReady();
+            }
 
 
             outState.putBoolean(VIDEO_PLAY_WHEN_READY,playWhenReady);
