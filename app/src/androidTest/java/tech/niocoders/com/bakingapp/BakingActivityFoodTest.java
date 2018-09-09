@@ -37,7 +37,7 @@ public class BakingActivityFoodTest {
                 .perform(RecyclerViewActions.actionOnItemAtPosition(1,
                         click()));
 
-        onView(withId(R.id.menu_toolbar)).check(matches(ViewMatchers.withText(FOOD_NAME)));
+        onView(withId(R.id.food_description)).check(matches(isDisplayed()));
 
 
     }

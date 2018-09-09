@@ -88,45 +88,6 @@ public class BakingWidgetProvider extends AppWidgetProvider {
     }
 
 
-   /* private static RemoteViews getSingleBakingRemoteView(Context context, String food_id) {
-        // Set the click handler to open the DetailActivity for plant ID,
-        // or the MainActivity if plant ID is invalid
-        Intent intent;
-        if (TextUtils.isEmpty(food_id)) {
-            intent = new Intent(context, BakingActivity.class);
-        } else { // Set on click to open the corresponding detail activity
-            Log.d(BakingWidgetProvider.class.getSimpleName(), "food_id=" + food_id);
-            intent = new Intent(context, FoodDescription.class);
-            intent.putExtra(BakingActivity.FOOD_ID, food_id);
-        }
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.food_widget);
-        // Update image and text
-        views.setImageViewResource(R.id.widget_ingredient_button, R.drawable.ic_launcher_background);
-        views.setTextViewText(R.id.food_name, "food_id "+food_id);
-
-        // Widgets allow click handlers to only launch pending intents
-        views.setOnClickPendingIntent(R.id.widget_food_item, pendingIntent);
-
-        return views;
-    }*/
-
-
-   /* private static RemoteViews getFoodListRemoteView(Context context) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.ingredient_widget_view);
-        // Set the GridWidgetService intent to act as the adapter for the GridView
-        Intent intent = new Intent(context,BakingWidgetService.class);
-        views.setRemoteAdapter(R.id.widget_ingredients_view, intent);
-        // Set the PlantDetailActivity intent to launch when clicked
-        Intent appIntent = new Intent(context, FoodDescription.class);
-        PendingIntent appPendingIntent = PendingIntent.getActivity(context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        views.setPendingIntentTemplate(R.id.widget_ingredients_view, appPendingIntent);
-        // Handle empty gardens
-       // views.setEmptyView(R.id.widget_ingredients_view, R.id.empty_view);
-        return views;
-    }*/
-
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager,

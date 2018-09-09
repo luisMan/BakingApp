@@ -4,4 +4,17 @@
     <string name="image_width">900</string>
     <string name="image_height">430</string>
     <string name="food_Description">Tutorial Description</string>
+    <string name="current_food_index">1</string>
+    <string name="current_page_index">Page : 0</string>
+
+    <string name="current_description_index">Page : 1</string>
+    <string name="food_name">Nutella Pie</string>
+    <string name="food_author">Author : Unknown author</string>
+    <string name="current_page_title_name">Recipe Introduction</string>
+
+    <!--description for the ingredient clicked-->
+    <string name="starting_prep">Starting prep</string>
+    <string name="description_prep">1. Preheat the oven to 350°F. Butter a 9\" deep dish pie pan.</string>
+
+
 </resources>

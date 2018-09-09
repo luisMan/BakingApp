@@ -89,18 +89,19 @@ public class FoodDescription extends AppCompatActivity implements BakingAppSteps
             String food_name = getIntent().getExtras().getString(BakingActivity.FOOD_NAME);
             String aut = getIntent().getExtras().getString(BakingActivity.FOOD_AUTHOR);
             Database_food_key_id =  ""+getIntent().getExtras().getInt(BakingActivity.FOOD_ID);
+            Log.d("foodId",Database_food_key_id);
             this.getSupportActionBar().setTitle(food_name);
-            author.setText("Author : " +aut);
+            author.setText(aut);
             invisbleCheckFoodName.setText(food_name);
-            tutorialSteps.setText("Current Step : "+currentTutorialStepIndex);
+            tutorialSteps.setText("Page : "+currentTutorialStepIndex);
         }else{
             String food_name = Preference.getPreferenceFoodName(this);
-            String aut = "Unknown author";
+            String aut = getResources().getString(R.string.food_author);
             Database_food_key_id =  Preference.getPreferenceFoodId(this);
             this.getSupportActionBar().setTitle(food_name);
-            author.setText("Author : " +aut);
+            author.setText(aut);
             invisbleCheckFoodName.setText(food_name);
-            tutorialSteps.setText("Current Step : "+currentTutorialStepIndex);
+            tutorialSteps.setText("Page : "+currentTutorialStepIndex);
         }
 
 
@@ -223,12 +224,13 @@ public class FoodDescription extends AppCompatActivity implements BakingAppSteps
             mStepAdapter.swapCursor(steps);
             //since we are on the step data we are going to follow each steps base on item clicks
             //if the step has a thumbnail image we will place it to our container if not then we use flicker to do that for us
-            String food_name = getIntent().getExtras().getString(BakingActivity.FOOD_NAME);
+            String food_name = Preference.getPreferenceFoodName(this);
             String desc = steps.getString(steps.getColumnIndex(BakingContract.StepsEntry.COLUMN_STEP_DESCRIPTION));
             String sdesc =  steps.getString(steps.getColumnIndex(BakingContract.StepsEntry.COLUMN_STEP_SHORTDESC));
             String number =  steps.getString(steps.getColumnIndex(BakingContract.StepsEntry.COLUMN_STEP_NUMBER));
-            //String thumb =  steps.getString(steps.getColumnIndex(BakingContract.StepsEntry.COLUMN_STEP_THUMBNAIL));
             String video_url = steps.getString(steps.getColumnIndex(BakingContract.StepsEntry.COLUMN_STEP_VIDEO_URL));
+
+            Log.d("stepClick",desc);
             tutorialSteps.setText("Page : "+number);
             invisbleCheckFoodName.setText(sdesc);
 
