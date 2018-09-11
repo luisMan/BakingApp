@@ -2,19 +2,32 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
         <TextView
-            android:id="@+id/food_item_name"
+            android:id="@+id/food_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="25sp"
-            android:gravity="center_vertical|center"
-            android:textColor="@color/colorAccent" />
-        <GridView
-            android:id="@+id/widget_ingredients_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:numColumns="1"/>
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:gravity="bottom|left"
+            android:text="Food Name"
+            android:textColor="@color/colorAccent"
+            android:textSize="24sp"
+            android:visibility="visible" />
 
+        <GridView
+            android:id="@+id/widget_remoteView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></GridView>
+
+        <RelativeLayout
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="There is not recipe to be added"/>
+        </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

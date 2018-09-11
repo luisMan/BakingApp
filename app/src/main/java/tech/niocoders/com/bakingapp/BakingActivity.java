@@ -74,6 +74,7 @@ public class BakingActivity extends AppCompatActivity implements FoodDatabaseAda
 
     public void PopulateDataBase()
     {
+
         mLoader =  new BakingLoader(this);
         //lets now execute the loader
         //get data from the given url server to see if any new items has been added then populate mysql database
